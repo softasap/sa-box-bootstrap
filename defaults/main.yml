@@ -2,6 +2,8 @@
 # defaults file for vs-box-bootstrap
   root_dir: PLEASE PROVIDE PATH TO ANSIBLE DEVELOPER RECIPES FOLDER
 
+  monit_version: "5.14-2"
+
   ufw_rules_default:
     - {
         policy: deny,

@@ -7,6 +7,8 @@
 
   - include: "{{root_dir}}/tasks_ufw.yml"
 
+  - include: "{{root_dir}}/tasks_monit.yml"
+
   - include: "{{root_dir}}/use/__create_deploy_user.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
     when: deploy_user is defined
 
