@@ -1,0 +1,25 @@
+---
+# tasks file for vs-box-bootstrap
+
+  - name: Sets correctly hostname
+    lineinfile: dest=/etc/hosts line="127.0.0.1 {{ansible_hostname}}"
+    sudo: yes
+
+  - include: "{{root_dir}}/tasks_ufw.yml"
+
+  - include: "{{root_dir}}/use/__create_deploy_user.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
+    when: deploy_user is defined
+
+  - name: SSH | Authorize keys
+    authorized_key: user={{deploy_user}} key="{{ lookup('file', item) }}"
+    when: deploy_user_keys is defined
+    with_items: "{{deploy_user_keys}}"
+    sudo: yes
+
+
+  - name: Install base Ubuntu packages
+    apt: update_cache=yes pkg={{item}} state=present
+    with_items:
+      - unzip
+      - mc
+    sudo: yes

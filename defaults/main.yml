@@ -1,0 +1,27 @@
+---
+# defaults file for vs-box-bootstrap
+  root_dir: PLEASE PROVIDE PATH TO ANSIBLE DEVELOPER RECIPES FOLDER
+
+  ufw_rules_default:
+    - {
+        policy: deny,
+        direction: incoming
+      }
+    - {
+        policy: allow,
+        direction: outgoing
+      }
+
+  ufw_rules_allow:
+    - {
+        port: 80,
+        proto: tcp
+       }
+    - {
+        port: 443,
+        proto: tcp
+      }
+    - {
+        port: 22,
+        proto: tcp
+       }
