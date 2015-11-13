@@ -170,8 +170,9 @@ box_bootstrap ansible_ssh_host=192.168.0.17 ansible_ssh_user=your_user ansible_s
 - *box_vars.yml* - set here specific environment overrides, like your preffered deploy user name and keys.
 - *box_bootstrap.yml* - here you put your box provisioning steps. Box securing is only the first step.
 In order, to override params for *sa-box-bootstrap* - pass the parameters like in example below.
+
 <pre>
----
+
 - hosts: all
 
   vars_files:
@@ -183,6 +184,7 @@ In order, to override params for *sa-box-bootstrap* - pass the parameters like i
          deploy_user: "{{my_deploy_user}}",
          deploy_user_keys: "{{my_deploy_authorized_keys}}"
        }
+       
 </pre>
 
 
