@@ -45,7 +45,7 @@ what *sa-box-bootstrap* role does:
 
 ## Configuration options
 Following variables might be overwritten:
-- root_dir  - required, (Ansible developer recipes)[https://github.com/Voronenko/ansible-developer_recipes] repository
+- root_dir  - required, [Ansible developer recipes](https://github.com/Voronenko/ansible-developer_recipes) repository
 - option_enforce_ssh_keys_login (true|false) - whenever to enforce ssh security
 - ufw_rules_default - default firewall policy. In most cases is not touched
 - ufw_rules_allow - set of inbound rules to be configured
@@ -164,9 +164,29 @@ and ansible role called  *sa-box-bootstrap* responsible for box securing steps.
 </pre>
 - *hosts* - list here the initial box credentials, that were provided to you for the server
 <pre>
-[box-bootstrap]
-jenkins_bootstrap ansible_ssh_host=192.168.0.17 ansible_ssh_user=your_user ansible_ssh_pass=your_password
+[bootstrap]
+box_bootstrap ansible_ssh_host=192.168.0.17 ansible_ssh_user=your_user ansible_ssh_pass=your_password
 </pre>
+- *box_vars.yml* - set here specific environment overrides, like your preffered deploy user name and keys.
+- *box_bootstrap.yml* - here you put your box provisioning steps. Box securing is only the first step.
+In order, to override params for *sa-box-bootstrap* - pass the parameters like in example below.
+<pre>
+---
+- hosts: all
+
+  vars_files:
+    - ./box_vars.yml
+  roles:
+     - {
+         role: "sa-box-bootstrap",
+         root_dir: "{{playbook_dir}}/public/ansible_developer_recipes",
+         deploy_user: "{{my_deploy_user}}",
+         deploy_user_keys: "{{my_deploy_authorized_keys}}"
+       }
+</pre>
+
+
+
 
 
 # Code in action
@@ -292,8 +312,19 @@ Finally - you have the secured box, with the sudoer - deployed user you specifie
 allowed to authorize only with keys you set. Root is not allowed to login. Only
 some inbound ports are allowed according to your rules.
 
+Check with NMap and try to login:
+<pre>
 
+ssh  192.168.0.17
+Permission denied (publickey).
+
+ssh -ldeploy_user 192.168.0.17
+Welcome to Ubuntu 14.04.2 LTS (GNU/Linux 3.13.0-32-generic x86_64)
+deploy_user@LABBOX17:~$
+
+</pre>
 
 # Points of interest
 
-This covers only very basic aspects to start using vault in your organization, but could be a  nice first step to move forward.
+You can reuse this playbook to create your own box bootstaping projects, and
+reuse the role to configure your environments quicker in secure way with ansible
