@@ -3,6 +3,7 @@
   root_dir: PLEASE PROVIDE PATH TO ANSIBLE DEVELOPER RECIPES FOLDER
 
   option_enforce_ssh_keys_login: true
+  option_file2ban: true
 
   monit_version: "5.14-2"
 
