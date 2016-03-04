@@ -1,9 +1,19 @@
 ---
-# tasks file for vs-box-bootstrap
+# tasks file for sa-box-bootstrap
 
-  - name: Sets correctly hostname
+  - name: Bootstrap | check apt last update
+    stat: path=/var/cache/apt
+    register: apt_cache_stat
+    become: yes
+
+  - name: Bootstrap | update apt if needed
+    apt: update_cache=yes
+    when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
+    become: yes
+
+  - name: Bootstrap | Sets correctly hostname
     lineinfile: dest=/etc/hosts line="127.0.0.1 {{ansible_hostname}}"
-    sudo: yes
+    become: yes
 
   - include: "{{root_dir}}/tasks_ufw.yml"
 
@@ -16,28 +26,28 @@
     authorized_key: user={{deploy_user}} key="{{ lookup('file', item) }}"
     when: deploy_user_keys is defined
     with_items: "{{deploy_user_keys}}"
-    sudo: yes
+    become: yes
 
   - name: SSH | Enforce SSH keys security
     lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}"
     with_items: sshd_config_lines
     when: option_enforce_ssh_keys_login
-    sudo: yes
+    become: yes
     tags: ssh
 
   - name: SSH | Restart SSHD
     service: name=ssh state=restarted
     when: option_enforce_ssh_keys_login
-    sudo: yes
+    become: yes
     tags: ssh
 
   - name: SSH | Turn file2ban on
     include: "{{root_dir}}/tasks_ssh_security.yml"
     when: option_file2ban
 
-  - name: Install base Ubuntu packages
+  - name: Bootstrap | Install base Ubuntu packages
     apt: pkg={{item}} state=present
     with_items:
       - unzip
       - mc
-    sudo: yes
+    become: yes
