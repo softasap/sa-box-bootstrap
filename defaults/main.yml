@@ -1,7 +1,7 @@
 ---
 # defaults file for vs-box-bootstrap
-  root_dir: {{ role_path }}
-  role_dir: {{ role_path }}
+  root_dir: "{{ role_path }}"
+  role_dir: "{{ role_path }}"
 
   monit_version: "5.14-2"
 
