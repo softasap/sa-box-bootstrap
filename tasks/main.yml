@@ -15,11 +15,11 @@
     lineinfile: dest=/etc/hosts line="127.0.0.1 {{ansible_hostname}}"
     become: yes
 
-  - include: "{{root_dir}}/tasks_ufw.yml"
+  - include: "tasks_ufw.yml"
 
-  - include: "{{root_dir}}/tasks_monit.yml"
+  - include: "tasks_monit.yml"
 
-  - include: "{{root_dir}}/use/__create_deploy_user.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
+  - include: "use/__create_deploy_user.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
     when: deploy_user is defined
 
   - name: SSH | Authorize keys
@@ -37,12 +37,12 @@
 
   - name: SSH | Restart SSHD
     service: name=ssh state=restarted
-    when: option_enforce_ssh_keys_login
+    when: option_enforce_ssh_keys_login and docker_test is not defined
     become: yes
     tags: ssh
 
   - name: SSH | Turn file2ban on
-    include: "{{root_dir}}/tasks_ssh_security.yml"
+    include: "tasks_fail2ban.yml"
     when: option_file2ban
 
   - name: Bootstrap | Install base Ubuntu packages

@@ -1,6 +1,9 @@
 ---
 # defaults file for vs-box-bootstrap
-  root_dir: PLEASE PROVIDE PATH TO ANSIBLE DEVELOPER RECIPES FOLDER
+  root_dir: {{ role_path }}
+  role_dir: {{ role_path }}
+
+  monit_version: "5.14-2"
 
   option_enforce_ssh_keys_login: true
   option_file2ban: true
