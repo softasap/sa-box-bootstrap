@@ -1,0 +1,24 @@
+---
+- hosts: www
+
+  vars:
+    - root_dir: ..
+    - user_authorized_keys:
+        - "~/.ssh/id_rsa.pub" 
+
+
+  pre_tasks:
+    - debug: msg="Pre tasks section"
+
+  roles:
+     - {
+         role: "sa-box-bootstrap",
+         deploy_user: "slavko",
+         deploy_user_keys: "{{user_authorized_keys}}"
+       }
+
+
+  tasks:
+
+    - debug: msg="Tasks section"
+
