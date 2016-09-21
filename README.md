@@ -4,18 +4,55 @@
 
 Example of usage:
 
-<pre>
+Simple
+
+```
 
   roles:
      - {
          role: "sa-box-bootstrap",
-         root_dir: "{{playbook_dir}}/public/ansible_developer_recipes",
          deploy_user: "{{jenkins_user}}",
          deploy_user_keys: "{{jenkins_authorized_keys}}"
        }
 
 
-</pre>
+```
+
+Advanced
+
+```
+
+  vars:
+    - root_dir: ..
+
+    - galaxy_deploy_user: galaxy
+      galaxy_deploy_authorized_keys:
+        - "{{playbook_dir}}/components/files/ssh/vyacheslav1.pub"
+        - "{{playbook_dir}}/components/files/ssh/vyacheslav2.pub"
+        - "{{playbook_dir}}/components/files/ssh/vyacheslav3.pub"
+        - "{{playbook_dir}}/components/files/ssh/vyacheslav4.pub"
+
+
+  pre_tasks:
+    - debug: msg="Pre tasks section"
+
+  roles:
+     - {
+         role: "sa-box-bootstrap",
+         deploy_user: "{{jenkins_user}}",
+         deploy_user_key: "{{playbook_dir}}/components/files/ssh/galaxy_rsa",
+         deploy_user_pub_key: "{{playbook_dir}}/components/files/ssh/galaxy_rsa.pub",
+         deploy_user_authorized_keys: "{{jenkins_authorized_keys}}",
+
+         option_copy_initial_authorized_keys: true,
+         option_enforce_ssh_keys_login: true,
+         option_file2ban: true,
+         option_ufw: true,
+         option_monit: true
+
+       }
+
+```
 
 
 Prepare your box for deployment

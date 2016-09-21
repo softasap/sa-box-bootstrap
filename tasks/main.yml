@@ -16,11 +16,16 @@
     become: yes
 
   - include: "tasks_ufw.yml"
+    when: option_ufw
 
   - include: "tasks_monit.yml"
+    when: option_monit
 
   - include: "use/__create_deploy_user.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
-    when: deploy_user is defined
+    when: option_create_deploy_user and deploy_user is defined
+
+  - include: "use/__provision_keys.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
+    when: option_inject_keys
 
   - name: SSH | Authorize keys
     authorized_key: user={{deploy_user}} key="{{ lookup('file', item) }}"
@@ -45,9 +50,3 @@
     include: "tasks_fail2ban.yml"
     when: option_file2ban
 
-  - name: Bootstrap | Install base Ubuntu packages
-    apt: pkg={{item}} state=present
-    with_items:
-      - unzip
-      - mc
-    become: yes

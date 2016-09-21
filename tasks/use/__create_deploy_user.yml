@@ -19,6 +19,7 @@
   - name: Deploy User | Check key presence
     stat: path=/{{ansible_user_id}}/.ssh/authorized_keys
     become: yes
+    when: option_copy_initial_authorized_keys
     register: check_authorized_keys
     tags:
      - deployer
@@ -26,14 +27,14 @@
   - name: Deploy User | Copy authorized_keys from {{ansible_user_id}}
     command: cp /{{ansible_user_id}}/.ssh/authorized_keys {{home}}/.ssh/authorized_keys
     become: yes
-    when: check_authorized_keys.stat.exists
+    when: option_copy_initial_authorized_keys and check_authorized_keys.stat.exists
     tags:
      - deployer
 
   - name: Deploy User | Set permission on authorized_keys
     file: path={{home}}/.ssh/authorized_keys mode=600 owner={{user}} group={{group}}
     become: yes
-    when: check_authorized_keys.stat.exists
+    when: option_copy_initial_authorized_keys and check_authorized_keys.stat.exists
     tags:
      - deployer
 

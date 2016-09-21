@@ -5,8 +5,15 @@
 
   monit_version: "5.14-2"
 
+  option_create_deploy_user: true
+
+  option_inject_keys: true    
+  option_copy_initial_authorized_keys: true
+
   option_enforce_ssh_keys_login: true
   option_file2ban: true
+  option_ufw: true
+  option_monit: true
 
   monit_version: "5.14-2"
 
