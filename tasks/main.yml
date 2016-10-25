@@ -29,8 +29,8 @@
 
   - name: SSH | Authorize keys
     authorized_key: user={{deploy_user}} key="{{ lookup('file', item) }}"
-    when: deploy_user_keys is defined
-    with_items: "{{deploy_user_keys}}"
+    when: deploy_user_authorized_keys is defined
+    with_items: "{{deploy_user_authorized_keys | default([])}}"
     become: yes
 
   - name: SSH | Enforce SSH keys security
