@@ -34,7 +34,7 @@
     become: yes
 
   - name: SSH | Enforce SSH keys security
-    lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}"
+    lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}" insertafter="{{item.insertafter | default('EOF')}}"
     with_items: sshd_config_lines
     when: option_enforce_ssh_keys_login
     become: yes
@@ -49,4 +49,3 @@
   - name: SSH | Turn file2ban on
     include: "tasks_fail2ban.yml"
     when: option_file2ban
-
