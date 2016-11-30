@@ -35,7 +35,7 @@
 
   - name: SSH | Enforce SSH keys security
     lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}" insertafter="{{item.insertafter | default('EOF')}}"
-    with_items: sshd_config_lines
+    with_items: "{{sshd_config_lines | default([])}}"
     when: option_enforce_ssh_keys_login
     become: yes
     tags: ssh

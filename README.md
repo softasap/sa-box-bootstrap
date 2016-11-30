@@ -225,7 +225,7 @@ In order, to override params for *sa-box-bootstrap* - pass the parameters like i
          deploy_user: "{{my_deploy_user}}",
          deploy_user_keys: "{{my_deploy_authorized_keys}}"
        }
-       
+
 </pre>
 
 
