@@ -29,7 +29,7 @@
 
   - name: UFW | Configure rules to allow incoming traffic from specific hosts
     ufw: rule=allow port="{{item.port}}" proto="{{item.proto}}" src="{{ item.address }}"
-    with_items: "{{ufw_rules_allow_from_hosts}} | default([])"
+    with_items: "{{ufw_rules_allow_from_hosts | default([])}}"
     when: ufw_rules_allow_from_hosts is defined
     become: yes
     tags:
