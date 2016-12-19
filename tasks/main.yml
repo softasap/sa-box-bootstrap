@@ -35,6 +35,9 @@
     with_items: "{{deploy_user_authorized_keys | default([])}}"
     become: yes
 
+  - fail: msg="If you enforce SSH key security - it is obligatory to provide at least one authorized key in deploy_user_authorized_keys"
+    when: option_enforce_ssh_keys_login and ( deploy_user_authorized_keys is not defined or deploy_user_authorized_keys|length == 0 )
+
   - name: SSH | Enforce SSH keys security
     lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}" insertafter="{{item.insertafter | default('EOF')}}"
     with_items: "{{sshd_config_lines | default([])}}"
@@ -42,12 +45,12 @@
     become: yes
     tags: ssh
 
+  - name: SSH | Turn file2ban on
+    include: "tasks_fail2ban.yml"
+    when: option_file2ban
+
   - name: SSH | Restart SSHD
     service: name=ssh state=restarted
     when: option_enforce_ssh_keys_login and docker_test is not defined
     become: yes
     tags: ssh
-
-  - name: SSH | Turn file2ban on
-    include: "tasks_fail2ban.yml"
-    when: option_file2ban
