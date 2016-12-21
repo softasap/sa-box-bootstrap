@@ -12,7 +12,7 @@ Simple
      - {
          role: "sa-box-bootstrap",
          deploy_user: "{{jenkins_user}}",
-         deploy_user_keys: "{{jenkins_authorized_keys}}"
+         deploy_user_authorized_keys: "{{jenkins_authorized_keys}}"
        }
 
 
@@ -26,7 +26,7 @@ Advanced
     - root_dir: ..
 
     - jenkins_user: jenkins
-      galaxy_deploy_authorized_keys:
+      jenkins_authorized_keys:
         - "{{playbook_dir}}/components/files/ssh/vyacheslav1.pub"
         - "{{playbook_dir}}/components/files/ssh/vyacheslav2.pub"
         - "{{playbook_dir}}/components/files/ssh/vyacheslav3.pub"
