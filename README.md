@@ -6,7 +6,7 @@ Example of usage:
 
 Simple
 
-```
+```YAML
 
   roles:
      - {
@@ -20,7 +20,7 @@ Simple
 
 Advanced
 
-```
+```YAML
 
   vars:
     - root_dir: ..
@@ -96,11 +96,11 @@ Following variables might be overwritten:
 
 ## Step 1 : Put firewall on
 1-st step install and configure ufw firewall:
-<pre>
+```YAML
 - include: "{{root_dir}}/tasks_ufw.yml"
-</pre>
+```
 by default, following firewall rules apply (outgoing any, http https & ssh are allowed inside):
-<pre>
+```YAML
 ufw_rules_default:
   - {
       policy: deny,
@@ -124,13 +124,13 @@ ufw_rules_allow:
       port: 22,
       proto: tcp
      }
-</pre>
+```
 You can override these variables to match your needs.
 
 ## Step 2: Create deploy user
 If you intend to work & provision this box, most likely you don't want to do it under the root.
 Thus, second step is - create deploy user, authorized by set of provided ssh keys, allowed to become sudoer w/o password (base requirement for automated provisioning)
-<pre>
+```YAML
 - include: "{{root_dir}}/use/__create_deploy_user.yml user={{deploy_user}} group={{deploy_user}} home=/home/{{deploy_user}}"
   when: deploy_user is defined
 
@@ -139,17 +139,17 @@ Thus, second step is - create deploy user, authorized by set of provided ssh key
   when: deploy_user_keys is defined
   with_items: "{{deploy_user_keys}}"
   sudo: yes
-</pre>
+```
 
 You might define the user in your playbook, for example, in this way:
-<pre>
+```YAML
 jenkins_user: jenkins
 jenkins_authorized_keys:
   - "{{playbook_dir}}/components/files/ssh/vyacheslav.pub"
-</pre>
+```
 
 and later pass this as a parameters to role:
-<pre>
+```YAML
 roles:
    - {
        role: "sa-box-bootstrap",
@@ -157,17 +157,17 @@ roles:
        deploy_user: "{{jenkins_user}}",
        deploy_user_keys: "{{jenkins_authorized_keys}}"
      }
-</pre>
+```
 
 ## Step 3: Secure SSH (optional)
-<pre>
+```YAML
 - name: SSH | Enforce SSH keys security
   lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}"
-  with_items: sshd_config_lines
+  with_items: "{{sshd_config_lines}}"
   when: option_enforce_ssh_keys_login
-  sudo: yes
+  become: yes
   tags: ssh
-</pre>
+```
 
 If var *option_enforce_ssh_keys_login* is set to true, sshd config is modified according to
 sshd_config_lines rules.  By default, it is using v2 protocol, prohibiting root login,
@@ -177,11 +177,11 @@ prohibiting password authenticaton.
 If var option_file2ban is set to true. Special tool file2ban is installed.
 It will watch out for failure ssh logging attempts and ban out intruders.
 To prevent yourself from being accidentally blocked, good idea to whitelist your ips, both single IPs and network masks are supported, for example:
-<pre>
+```YAML
 whitelistedips:
  - 127.0.0.1
  - 127.0.0.1/8
-</pre>
+```
 
 # Creating your own box bootstrap project
 
@@ -195,24 +195,24 @@ that will be used by the playbook.
 In particular, it includes ansible- by default developer_recipes (repository with set of handy deployment recipes)
 and ansible role called  *sa-box-bootstrap* responsible for box securing steps.
 
-<pre>
+```
 [submodule "public/ansible_developer_recipes"]
 	path = public/ansible_developer_recipes
 	url = git@github.com:Voronenko/ansible-developer_recipes.git
 [submodule "roles/sa-box-bootstrap"]
         path = roles/sa-box-bootstrap
         url = git@github.com:softasap/sa-box-bootstrap.git
-</pre>
+```
 - *hosts* - list here the initial box credentials, that were provided to you for the server
-<pre>
+```
 [bootstrap]
 box_bootstrap ansible_ssh_host=192.168.0.17 ansible_ssh_user=your_user ansible_ssh_pass=your_password
-</pre>
+```
 - *box_vars.yml* - set here specific environment overrides, like your preffered deploy user name and keys.
 - *box_bootstrap.yml* - here you put your box provisioning steps. Box securing is only the first step.
 In order, to override params for *sa-box-bootstrap* - pass the parameters like in example below.
 
-<pre>
+```YAML
 
 - hosts: all
 
@@ -226,7 +226,7 @@ In order, to override params for *sa-box-bootstrap* - pass the parameters like i
          deploy_user_keys: "{{my_deploy_authorized_keys}}"
        }
 
-</pre>
+```
 
 
 
@@ -239,15 +239,15 @@ In order to use it - fork it, adjust parameters to your needs, and use.
 Adjusting includes: creation of box_vars.yml file. You can override there any of mentioned above variables.
 The minimal required set is deploy_user and your public keys.
 
-<pre>
+```
 box_deploy_user: jenkins
 box_deploy_authorized_keys:
   - "{{playbook_dir}}/components/files/ssh/vyacheslav.pub"
-</pre>
+```
 
 Ensure, you have ansible (bootstrap.sh to install) and cloned roles directories (init.sh)
 Than run setup.sh.  If everything is configured correctly, you will see smth like that:
-<pre>
+```
 PLAY [all] ********************************************************************
 
 GATHERING FACTS ***************************************************************
@@ -349,14 +349,14 @@ changed: [box_bootstrap] => (item=unzip,mc)
 
 PLAY RECAP ********************************************************************
 box_bootstrap              : ok=21   changed=13   unreachable=0    failed=0   
-</pre>
+```
 
 Finally - you have the secured box, with the sudoer - deployed user you specified,
 allowed to authorize only with keys you set. Root is not allowed to login. Only
 some inbound ports are allowed according to your rules.
 
 Check with NMap and try to login:
-<pre>
+```shell
 
 ssh  192.168.0.17
 Permission denied (publickey).
@@ -365,7 +365,7 @@ ssh -ldeploy_user 192.168.0.17
 Welcome to Ubuntu 14.04.2 LTS (GNU/Linux 3.13.0-32-generic x86_64)
 deploy_user@LABBOX17:~$
 
-</pre>
+```
 
 # Points of interest
 
