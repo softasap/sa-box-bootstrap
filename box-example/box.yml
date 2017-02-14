@@ -25,7 +25,7 @@
      - {
          role: "sa-box-bootstrap",
          deploy_user: "slavko",
-         deploy_user_keys: "{{user_authorized_keys}}"
+         deploy_user_authorized_keys: "{{user_authorized_keys}}"
        }
 
 

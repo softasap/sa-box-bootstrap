@@ -8,7 +8,7 @@
       - monit
 
   - name: Monit | libssl-dev dependency
-    apt: pkg="libssl-dev" state="present"
+    apt: pkg="libssl-dev" state="present" update_cache="yes"
     become: yes
     tags:
       - monit

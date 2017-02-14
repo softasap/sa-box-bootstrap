@@ -7,7 +7,7 @@
 
   option_create_deploy_user: true
 
-  option_inject_keys: true    
+  option_inject_keys: true
   option_copy_initial_authorized_keys: true
 
   option_enforce_ssh_keys_login: true
@@ -40,6 +40,14 @@
         port: 22,
         proto: tcp
        }
+
+  ufw_rules_allow_from_hosts: []
+    # - {
+    #     port: 22,
+    #     proto: tcp,
+    #     address: "192.168.0.0/16"
+    #    }
+
 
   sshd_config_lines:
     - {regexp: "^Protocol.*", line: "Protocol 2"}
