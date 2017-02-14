@@ -1,14 +1,25 @@
 ---
 - hosts: www
+  gather_facts: False
 
   vars:
     - root_dir: ..
     - user_authorized_keys:
-        - "~/.ssh/id_rsa.pub" 
-
+        - "~/.ssh/id_rsa.pub"
 
   pre_tasks:
     - debug: msg="Pre tasks section"
+
+    - name: ANSIBLE PYTHON | install python 2
+      raw: test -e /usr/bin/python || (apt -qqy update && apt install -qy python-minimal)
+      become: yes
+
+    - name:  UNPRIVILEGED USERS | Get acl dependency (ansible unprivileged user operations magic)
+      apt: pkg="acl"
+      become: yes
+
+    - name: gather facts
+      setup:
 
   roles:
      - {
