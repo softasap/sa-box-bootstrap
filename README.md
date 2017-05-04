@@ -12,7 +12,8 @@ Simple
      - {
          role: "sa-box-bootstrap",
          deploy_user: "{{jenkins_user}}",
-         deploy_user_authorized_keys: "{{jenkins_authorized_keys}}"
+         deploy_user_authorized_keys: "{{jenkins_authorized_keys}}",
+         timezone: "Europe/Kiev"
        }
 
 
@@ -31,7 +32,7 @@ Advanced
         - "{{playbook_dir}}/components/files/ssh/vyacheslav2.pub"
         - "{{playbook_dir}}/components/files/ssh/vyacheslav3.pub"
         - "{{playbook_dir}}/components/files/ssh/vyacheslav4.pub"
-
+    - timezone: "Europe/Kiev"
 
   pre_tasks:
     - debug: msg="Pre tasks section"
@@ -43,6 +44,8 @@ Advanced
          deploy_user_key: "{{playbook_dir}}/components/files/ssh/jenkins_rsa",
          deploy_user_pub_key: "{{playbook_dir}}/components/files/ssh/jenkins_rsa.pub",
          deploy_user_authorized_keys: "{{jenkins_authorized_keys}}",
+
+         timezone: "Europe/Kiev",
 
          option_copy_initial_authorized_keys: true,
          option_enforce_ssh_keys_login: true,

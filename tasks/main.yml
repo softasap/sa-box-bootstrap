@@ -12,7 +12,32 @@
     become: yes
 
   - name: Bootstrap | Sets correctly hostname
-    lineinfile: dest=/etc/hosts line="127.0.0.1 {{ansible_hostname}}"
+    lineinfile: dest=/etc/hosts line="127.0.0.1 {{hostname}}"
+    become: yes
+
+  - name: Bootstrap | remove domain from hostname, if it was passed like full domain
+    lineinfile:
+      dest:     /etc/hostname
+      regexp:   "^{{ hostname }}.*"
+      line:     "{{ hostname }}"
+    become: yes
+
+  - name: Bootstrap | set default timezone
+    shell: echo {{timezone}} > /etc/timezone
+    when: ansible_os_family == "Debian"
+    become: yes
+
+  - name: Bootstrap | reconfigure timezone data
+    command: dpkg-reconfigure -f noninteractive tzdata
+    when: ansible_os_family == "Debian"
+    become: yes
+
+  - name: Bootstrap | address cloud-init - change 127.0.1.1 to real external IP address
+    lineinfile:
+      dest:     /etc/hosts
+      regexp:   '^127\.0\.1\.1(.*)$'
+      line:     '{{ hostvars[ansible_hostname][external_interface]["ipv4"]["address"] }}\1'
+      backrefs: yes
     become: yes
 
   - include: "tasks_ufw.yml"
