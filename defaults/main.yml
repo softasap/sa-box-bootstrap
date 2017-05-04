@@ -5,7 +5,7 @@
 
   monit_version: "5.14-2"
 
-  timezone: "Europe/Kiev"
+# timezone: "Europe/Kiev"
 
   hostname: "{{ansible_host_name}}"
 

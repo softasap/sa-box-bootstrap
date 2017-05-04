@@ -15,16 +15,25 @@
     lineinfile: dest=/etc/hosts line="127.0.0.1 {{hostname}}"
     become: yes
 
+  - name: Bootstrap | Sets correctly hostname
+    shell: hostname {{hostname}}
+    ignore_errors: true
+    become: yes
+
   - name: Bootstrap | remove domain from hostname, if it was passed like full domain
     lineinfile:
       dest:     /etc/hostname
-      regexp:   "^{{ hostname }}.*"
+      regexp:   "^[A-Za-z]*.*"
       line:     "{{ hostname }}"
     become: yes
 
-  - name: Bootstrap | set default timezone
-    shell: echo {{timezone}} > /etc/timezone
-    when: ansible_os_family == "Debian"
+  - name: Bootstrap | set default timezone to {{timezone}}
+    copy:
+      content: '{{ timezone | default("UTC") }}'
+      dest: /etc/timezone
+      owner: root
+      group: root
+      mode: 0644
     become: yes
 
   - name: Bootstrap | reconfigure timezone data
@@ -32,11 +41,11 @@
     when: ansible_os_family == "Debian"
     become: yes
 
-  - name: Bootstrap | address cloud-init - change 127.0.1.1 to real external IP address
+  - name: Bootstrap | address cloud-init - change 127.0.1.1 to real eth0 IP address
     lineinfile:
       dest:     /etc/hosts
       regexp:   '^127\.0\.1\.1(.*)$'
-      line:     '{{ hostvars[ansible_hostname][external_interface]["ipv4"]["address"] }}\1'
+      line:     'ansible_eth0.ipv4.address\1'
       backrefs: yes
     become: yes
 
