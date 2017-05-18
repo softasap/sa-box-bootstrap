@@ -57,7 +57,7 @@
 
   - debug: msg="About to create deployment user {{deploy_user}}"
 
-  - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}} thesudopassword={{deploy_user_sudo_password | default(omit)}}"
+  - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}} thepassword={{deploy_user_sudo_password | default(omit)}}"
     when: option_create_deploy_user and deploy_user is defined
 
   - include: "use/__provision_keys.yml"
