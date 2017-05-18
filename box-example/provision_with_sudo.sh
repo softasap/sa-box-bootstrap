@@ -1,9 +1,9 @@
 # Static parameters
 WORKSPACE=./
-BOX_PLAYBOOK=$WORKSPACE/box.yml
+BOX_PLAYBOOK=$WORKSPACE/box_sudo.yml
 BOX_NAME=sixteen
 BOX_ADDRESS=188.166.70.141
-BOX_USER=root
+BOX_USER=slavko
 BOX_PWD=
 
 prudentia ssh <<EOF
@@ -18,6 +18,7 @@ $BOX_PWD
 
 verbose 4
 set box_address $BOX_ADDRESS
+set ansible_become_password secret
 
 provision $BOX_NAME
 EOF
