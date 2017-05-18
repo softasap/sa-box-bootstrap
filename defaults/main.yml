@@ -7,7 +7,7 @@
 
 # timezone: "Europe/Kiev"
 
-  hostname: "{{ansible_host_name}}"
+  hostname: "{{ansible_host_name | default(ansible_nodename)}}"
 
   option_create_deploy_user: true
 

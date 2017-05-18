@@ -57,6 +57,50 @@ Advanced
 
 ```
 
+Important: if you would not specify `deploy_user_sudo_password` parameter, the created deployment user will be allowed to execute sudo w/o password confirmation.
+While in some cases it is ok, having additional level of security is never bad, thus:
+
+
+Deployment user requesting a sudo password
+
+```YAML
+
+  vars:
+    - user_authorized_keys:
+        - "~/.ssh/id_rsa.pub"
+    - user_sudo_pass: "secret"
+
+  roles:
+     - {
+         role: "sa-box-bootstrap",
+         deploy_user: "slavko",
+         deploy_user_authorized_keys: "{{user_authorized_keys}}",
+         deploy_user_sudo_password: "{{user_sudo_pass | password_hash('sha512')}}",
+         option_enforce_ssh_keys_login: yes
+       }
+
+```
+
+If you have deployment user which requires entering sudo password, you need to provide it via `ansible_become_password` parameter.
+
+```
+
+register
+$BOX_PLAYBOOK
+$BOX_NAME
+$BOX_ADDRESS
+$BOX_USER
+$BOX_PWD
+
+verbose 4
+set box_address $BOX_ADDRESS
+set ansible_become_password secret
+
+provision $BOX_NAME
+
+
+```
+
 
 Prepare your box for deployment
 =======================================
