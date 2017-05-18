@@ -42,15 +42,14 @@
 
   - name: Deploy User | Ensuring sudoers no pwd prompting, if no sudo password set
     lineinfile: dest=/etc/sudoers state=present regexp="%{{theuser}}" line="%{{theuser}} ALL=(ALL) NOPASSWD:ALL" validate="visudo -cf %s"
-    when: thepassword is not defined
+    when: thepassword is not defined or thepassword.startswith("__omit_place_holder__")
     become: yes
     tags:
      - deployer
 
   - name: Deploy User | Ensuring sudoers with pwd prompting, if sudo password set
     lineinfile: dest=/etc/sudoers state=present regexp="%{{theuser}}" line="%{{theuser}} ALL=(ALL) ALL" validate="visudo -cf %s"
-    when: thepassword is defined
+    when: thepassword is defined and not thepassword.startswith("__omit_place_holder__")
     become: yes
     tags:
      - deployer
-
