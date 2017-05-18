@@ -11,7 +11,7 @@
      - deployer
 
   - name: Deploy User | Creating user
-    user: name={{theuser}} home={{home}} state=present shell=/bin/bash generate_ssh_key=yes group={{thegroup}} groups=sudo
+    user: name={{theuser}} home={{home}} state=present shell=/bin/bash generate_ssh_key=yes group={{thegroup}} groups=sudo password="{{thesudopassword | default(omit)}}"
     become: yes
     tags:
       - deployer
@@ -38,8 +38,10 @@
     tags:
      - deployer
 
+  # for cases you want sudo password for deploy user, sudoer w/o password is prohibited
   - name: Deploy User | Ensuring sudoers no pwd prompting
     lineinfile: dest=/etc/sudoers state=present regexp="%{{theuser}}" line="%{{theuser}} ALL=(ALL) NOPASSWD:ALL" validate="visudo -cf %s"
+    when: thesudopassword is not defined
     become: yes
     tags:
      - deployer
