@@ -1,0 +1,6 @@
+deploy_user_group: 'sudo'
+
+fail2ban_packages:
+  - fail2ban
+  
+fail2ban_action: "ufw"

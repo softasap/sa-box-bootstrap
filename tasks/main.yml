@@ -1,15 +1,29 @@
 ---
 # tasks file for sa-box-bootstrap
 
-  - name: Bootstrap | check apt last update
-    stat: path=/var/cache/apt
-    register: apt_cache_stat
-    become: yes
+  - include_vars: "{{item}}"
+    with_first_found:
+       - "{{role_dir}}/defaults/{{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
 
-  - name: Bootstrap | update apt if needed
-    apt: update_cache=yes
-    when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
-    become: yes
+  - include: "{{ item }}"
+    with_first_found:
+      - files:
+          - "distribution_tasks/{{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
+        skip: true
+
+  - block:
+
+    - name: Bootstrap | check apt last update
+      stat: path=/var/cache/apt
+      register: apt_cache_stat
+      become: yes
+
+    - name: Bootstrap | update apt if needed
+      apt: update_cache=yes
+      when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
+      become: yes
+
+    when: ansible_os_family == "Debian"
 
   - name: Bootstrap | Sets correctly hostname
     lineinfile: dest=/etc/hosts line="127.0.0.1 {{hostname}}"
@@ -84,7 +98,7 @@
     when: option_file2ban
 
   - name: SSH | Restart SSHD
-    service: name=ssh state=restarted
+    service: name=sshd state=restarted
     when: option_enforce_ssh_keys_login and docker_test is not defined
     become: yes
     tags: ssh

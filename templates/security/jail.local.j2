@@ -8,7 +8,7 @@ filter   = sshd
 
 logpath  = /var/log/auth.log
 
-action   = hostsdeny[file=/etc/hosts.deny]
+action   = {{fail2ban_action}}
 
 maxretry = 3
 
@@ -16,4 +16,4 @@ ignoreip = 127.0.0.1/8 {% if whitelistedips is defined %} {% for host in whiteli
 
 findtime = 300
 
-bantime  = -1
+bantime  = 900

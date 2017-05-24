@@ -13,7 +13,7 @@
      - deployer
 
   - name: Deploy User | Creating user
-    user: name="{{theuser}}" home="{{home}}" state="present" shell="/bin/bash" generate_ssh_key="yes" group="{{thegroup}}" groups="sudo" password="{{thepassword | default(omit)}}"
+    user: name="{{theuser}}" home="{{home}}" state="present" shell="/bin/bash" generate_ssh_key="yes" group="{{thegroup}}" groups="{{deploy_user_group}}" password="{{thepassword | default(omit)}}"
     become: yes
     tags:
       - deployer

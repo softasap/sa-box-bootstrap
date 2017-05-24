@@ -16,7 +16,7 @@
 
   option_enforce_ssh_keys_login: true
   option_file2ban: true
-  option_ufw: true
+  option_ufw: true # fallbacks to
   option_monit: true
 
   monit_version: "5.14-2"
