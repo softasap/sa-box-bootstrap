@@ -1,5 +1,8 @@
 ---
 # tasks file for sa-box-bootstrap
+  - assert:
+      that: option_ufw is not defined
+      msg: "'option_ufw' renamed to option_firewall"
 
   - include_vars: "{{item}}"
     with_first_found:
@@ -63,8 +66,8 @@
       backrefs: yes
     become: yes
 
-  - include: "tasks_ufw.yml"
-    when: option_ufw
+  - include: "tasks_{{firewall_type}}.yml"
+    when: option_firewall
 
   - include: "tasks_monit.yml"
     when: option_monit
