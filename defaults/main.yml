@@ -3,6 +3,7 @@
   root_dir: "{{ role_path }}"
   role_dir: "{{ role_path }}"
 
+# for ubuntu distributives only
   monit_version: "5.14-2"
 
 # timezone: "Europe/Kiev"

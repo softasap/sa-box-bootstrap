@@ -1,5 +1,12 @@
 
-  - fail: msg="For now monit setting is not supported"
+  - block:
+
+    - name: Monit | Install
+      yum: pkg="monit" state="present"
+      become: yes
+      tags:
+        - monit
+
     when: ansible_os_family != "Debian"
 
   - block:
@@ -30,4 +37,5 @@
       become: yes
       tags:
         - monit
+        
     when: ansible_os_family == "Debian"
