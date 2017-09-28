@@ -4,9 +4,13 @@
     when: option_ufw is defined
 
 
+  - debug: msg="Trying to use defaults {{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml with distribution tasks {{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
+
   - include_vars: "{{item}}"
     with_first_found:
-       - "{{role_dir}}/defaults/{{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
+      - files:
+          - "{{role_dir}}/defaults/{{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
+        skip: true
 
   - include: "{{ item }}"
     with_first_found:
