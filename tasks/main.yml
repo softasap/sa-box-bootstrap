@@ -1,6 +1,6 @@
 ---
 # tasks file for sa-box-bootstrap
-  - debug: msg: "================ 'option_ufw' renamed to option_firewall ================ "
+  - debug: msg="================ 'option_ufw' renamed to option_firewall ================ "
     when: option_ufw is defined
 
 
