@@ -1,8 +1,8 @@
 ---
 # tasks file for sa-box-bootstrap
-  - assert:
-      that: option_ufw is not defined
-      msg: "'option_ufw' renamed to option_firewall"
+  - debug: msg: "================ 'option_ufw' renamed to option_firewall ================ "
+    when: option_ufw is defined
+
 
   - include_vars: "{{item}}"
     with_first_found:
