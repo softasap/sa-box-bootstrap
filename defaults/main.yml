@@ -3,6 +3,7 @@
   root_dir: "{{ role_path }}"
   role_dir: "{{ role_path }}"
 
+# for ubuntu distributives only
   monit_version: "5.14-2"
 
 # timezone: "Europe/Kiev"
@@ -16,10 +17,8 @@
 
   option_enforce_ssh_keys_login: true
   option_file2ban: true
-  option_ufw: true
+  option_firewall: "{{option_ufw | default(true)}}"
   option_monit: true
-
-  monit_version: "5.14-2"
 
   ufw_rules_default:
     - {
@@ -51,7 +50,6 @@
     #     proto: tcp,
     #     address: "192.168.0.0/16"
     #    }
-
 
   sshd_config_lines:
     - {regexp: "^Protocol.*", line: "Protocol 2"}
