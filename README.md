@@ -50,7 +50,7 @@ Advanced
          option_copy_initial_authorized_keys: true,
          option_enforce_ssh_keys_login: true,
          option_file2ban: true,
-         option_ufw: true,
+         option_firewall: true,
          option_monit: true
 
        }

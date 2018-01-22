@@ -3,8 +3,6 @@
   root_dir: "{{ role_path }}"
   role_dir: "{{ role_path }}"
 
-  monit_version: "5.14-2"
-
 # timezone: "Europe/Kiev"
 
   hostname: "{{ansible_host_name | default(ansible_nodename)}}"
@@ -16,7 +14,7 @@
 
   option_enforce_ssh_keys_login: true
   option_file2ban: true
-  option_ufw: true
+  option_firewall: "{{option_ufw | default(true)}}"
   option_monit: true
 
   deploy_user_sudo_password_empty: "{{ '' | password_hash('sha512')}}"
