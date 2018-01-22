@@ -19,9 +19,9 @@
   option_ufw: true
   option_monit: true
 
-  deploy_user_sudo_password_empty: {{"" | password_hash('sha512')}}
+  deploy_user_sudo_password_empty: "{{ '' | password_hash('sha512')}}"
 
-  monit_version: "5.14-2"
+  monit_version: "5.25.1-1" # "5.14-2" for 14.04
 
   ufw_rules_default:
     - {
