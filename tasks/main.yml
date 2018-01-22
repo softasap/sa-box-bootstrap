@@ -78,11 +78,19 @@
 
   - debug: msg="About to create deployment user {{deploy_user}}"
 
-  - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}} thepassword={{deploy_user_sudo_password | default(omit)}}"
-    when: option_create_deploy_user and deploy_user is defined and deploy_user_sudo_password is defined and deploy_user_sudo_password | default(deploy_user_sudo_password_empty) != deploy_user_sudo_password_empty
+  - set_fact:
+      deploy_user_has_sudo_password: false
 
-  - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}}"
-    when: option_create_deploy_user and deploy_user is defined and ( deploy_user_sudo_password is not defined or deploy_user_sudo_password | default(deploy_user_sudo_password_empty) == deploy_user_sudo_password_empty )
+  - name: Deploy user is sudoer with password
+    set_fact:
+      deploy_user_has_sudo_password: true
+      deploy_user_actual_pass: "{{deploy_user_sudo_password}}"
+    when: deploy_user_sudo_password is defined and not (deploy_user_sudo_password ==  deploy_user_sudo_password_empty)
+
+  - debug: msg="{{deploy_user_sudo_password | default('NOT PROVIDED')}} vs {{deploy_user_sudo_password_empty}}"  
+
+  - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}} thepassword={{deploy_user_actual_pass | default(omit)}}"
+    when: option_create_deploy_user and deploy_user is defined 
 
   - include: "use/__provision_keys.yml"
     when: option_inject_keys
