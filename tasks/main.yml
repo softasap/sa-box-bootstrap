@@ -79,10 +79,10 @@
   - debug: msg="About to create deployment user {{deploy_user}}"
 
   - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}} thepassword={{deploy_user_sudo_password | default(omit)}}"
-    when: option_create_deploy_user and deploy_user is defined and deploy_user_sudo_password is defined and deploy_user_sudo_password != deploy_user_sudo_password_empty
+    when: option_create_deploy_user and deploy_user is defined and deploy_user_sudo_password is defined and deploy_user_sudo_password | default(deploy_user_sudo_password_empty) != deploy_user_sudo_password_empty
 
   - include: "use/__create_deploy_user.yml theuser={{deploy_user}} thegroup={{deploy_user}} home=/home/{{deploy_user}}"
-    when: option_create_deploy_user and deploy_user is defined and ( deploy_user_sudo_password is not defined or deploy_user_sudo_password == deploy_user_sudo_password_empty )
+    when: option_create_deploy_user and deploy_user is defined and ( deploy_user_sudo_password is not defined or deploy_user_sudo_password | default(deploy_user_sudo_password_empty) == deploy_user_sudo_password_empty )
 
   - include: "use/__provision_keys.yml"
     when: option_inject_keys
