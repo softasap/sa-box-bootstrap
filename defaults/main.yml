@@ -3,9 +3,6 @@
   root_dir: "{{ role_path }}"
   role_dir: "{{ role_path }}"
 
-# for ubuntu distributives only
-  monit_version: "5.14-2"
-
 # timezone: "Europe/Kiev"
 
   hostname: "{{ansible_host_name | default(ansible_nodename)}}"
@@ -19,6 +16,10 @@
   option_file2ban: true
   option_firewall: "{{option_ufw | default(true)}}"
   option_monit: true
+
+  deploy_user_sudo_password_empty: "{{ '' | password_hash('sha512')}}"
+
+  monit_version: "5.25.1-1" # "5.14-2" for 14.04
 
   ufw_rules_default:
     - {
@@ -50,6 +51,7 @@
     #     proto: tcp,
     #     address: "192.168.0.0/16"
     #    }
+
 
   sshd_config_lines:
     - {regexp: "^Protocol.*", line: "Protocol 2"}
