@@ -21,7 +21,7 @@
       - file2ban
 
   - name: SSH |  reload fail2ban
-    service: name=fail2ban state=reloaded enabled=yes
+    service: name=fail2ban state=restarted enabled=yes
     become: yes
     tags:
       - file2ban

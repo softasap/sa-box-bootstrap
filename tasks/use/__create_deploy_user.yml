@@ -6,6 +6,13 @@
 
   - debug: msg="IMPORTANT! IF YOU PROVIDE PASS FOR DEPLOYMENT USER - PROVIDE IT HASHED, POSSIBLE FILTER -  | password_hash('sha512') "
 
+  - name: Deploy User | Dependencies
+    package: name="sudo" state="present"
+    become: yes
+    tags:
+     - deployer
+
+
   - name: Deploy User | Creating group
     group: name={{thegroup}} state=present
     become: yes
