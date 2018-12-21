@@ -4,9 +4,12 @@
     when: option_ufw is defined
 
 
-  - debug: msg="Trying to use defaults {{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml with distribution tasks {{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
-    tags:
-      - skip_ansible_lint
+  - debug:
+      msg: >
+        Trying to use defaults {{ (override_os_family is defined)
+        | ternary(override_os_family,ansible_os_family) | lower }}.yml
+        with distribution tasks {{ (override_os_family is defined)
+        | ternary(override_os_family,ansible_os_family) | lower }}.yml
 
   - name: Try to include distribution specific vars
     include_vars: "{{ item }}"
@@ -14,6 +17,8 @@
       - files:
           - "{{ role_dir }}/defaults/{{ (override_os_family is defined) | ternary(override_os_family,ansible_os_family) | lower }}.yml"
         skip: true
+    tags:
+      - skip_ansible_lint
 
   - include: "{{ item }}"
     with_first_found:
@@ -35,6 +40,8 @@
       apt: update_cache=yes
       when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
       become: yes
+      tags:
+        - skip_ansible_lint
 
     when: ansible_os_family == "Debian"
 
@@ -91,7 +98,12 @@
       deploy_user_actual_pass: "{{ deploy_user_sudo_password }}"
     when: deploy_user_sudo_password is defined and not option_skip_deploy_sudo_password | default(false)
 
-  - include: "use/__create_deploy_user.yml theuser={{ deploy_user }} thegroup={{ deploy_user }} home=/home/{{ deploy_user }} thepassword={{ deploy_user_actual_pass | default(omit) }}"
+  - include_tasks: use/__create_deploy_user.yml
+    vars:
+      theuser: "{{ deploy_user }}"
+      thegroup: "{{ deploy_user }}"
+      home: "/home/{{ deploy_user }}"
+      thepassword: "{{ deploy_user_actual_pass | default(omit) }}"
     when: option_create_deploy_user and deploy_user is defined
 
   - include: "use/__provision_keys.yml"
