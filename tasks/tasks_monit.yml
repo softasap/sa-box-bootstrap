@@ -8,8 +8,11 @@
       - monit
 
   - name: Monit | package dependencies
-    apt: pkg="{{item}}" state="present"
+    apt: pkg="{{ item }}" state="present"
     become: yes
+    retries: 3
+    register: result
+    until: not result.failed
     with_items:
       - libssl-dev
       - build-essential
@@ -17,43 +20,44 @@
       - monit
 
   - block:
-    
        - name: Download openssl-1.0.2-latest.tar.gz
          get_url:
            url: https://www.openssl.org/source/openssl-1.0.2p.tar.gz
            dest: /usr/src/openssl-1.0.2p.tar.gz
-         become: yes 
+         become: yes
 
-       - name: Extract openssl-1.0.2-latest.tar.gz         
-         unarchive: 
+       - name: Extract openssl-1.0.2-latest.tar.gz
+         unarchive:
             src: /usr/src/openssl-1.0.2p.tar.gz
             dest: /usr/src/
             remote_src: yes
-         become: yes             
+         become: yes
 
        - name: ./config
-         shell: ./config
+         command: ./config
          args:
            chdir: /usr/src/openssl-1.0.2p
          become: yes
 
        - name: make
-         shell: make
+         command: make
          args:
            chdir: /usr/src/openssl-1.0.2p
-         become: yes         
+         become: yes
 
        - name: make install
-         shell: make install
+         command: make install
          args:
            chdir: /usr/src/openssl-1.0.2p
-         become: yes         
+         become: yes
 
     when: monit_check_deb.rc == 1 and monit_version != "default"
 
 
   - name: Monit | Download
-    get_url: url="http://us.archive.ubuntu.com/ubuntu/pool/universe/m/monit/monit_{{monit_version}}_amd64.deb" dest="/tmp/monit_{{monit_version}}_amd64.deb"
+    get_url:
+      url: "http://us.archive.ubuntu.com/ubuntu/pool/universe/m/monit/monit_{{ monit_version }}_amd64.deb"
+      dest: "/tmp/monit_{{ monit_version }}_amd64.deb"
 #                 https://mmonit.com/monit/dist/binary/5.19.0/monit-5.19.0-linux-x64.tar.gz
 #                 http://us.archive.ubuntu.com/ubuntu/pool/universe/m/monit/monit_5.19.0-1_amd64.deb
     when: monit_check_deb.rc == 1 and monit_version != "default"
@@ -61,7 +65,7 @@
       - monit
 
   - name: Monit | Install (from deb)
-    apt: deb="/tmp/monit_{{monit_version}}_amd64.deb"
+    apt: deb="/tmp/monit_{{ monit_version }}_amd64.deb"
     when: monit_check_deb.rc == 1 and monit_version != "default"
     become: yes
     tags:
@@ -70,12 +74,15 @@
   - name: Monit | Install (from distribution)
     apt: pkg="monit" state="present"
     when: monit_check_deb.rc == 1 and monit_version == "default"
+    retries: 3
+    register: result
+    until: not result.failed
     become: yes
     tags:
       - monit
 
   - name: Monit | Ensure conf dir do exist
-    file: path="{{item}}" state="directory" owner="root" group="root"
+    file: path="{{ item }}" state="directory" owner="root" group="root"
     with_items:
       - /etc/monit/conf-available
       - /etc/monit/conf-enabled

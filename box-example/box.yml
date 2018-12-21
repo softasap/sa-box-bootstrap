@@ -27,8 +27,8 @@
      - {
          role: "sa-box-bootstrap",
          deploy_user: "slavko",
-         deploy_user_authorized_keys: "{{user_authorized_keys}}",
-         deploy_user_sudo_password: "{{user_sudo_pass | password_hash('sha512')}}",
+         deploy_user_authorized_keys: "{{ user_authorized_keys }}",
+         deploy_user_sudo_password: "{{ user_sudo_pass | password_hash('sha512') }}",
          option_enforce_ssh_keys_login: yes
        }
 
