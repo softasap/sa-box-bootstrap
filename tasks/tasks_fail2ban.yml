@@ -1,6 +1,6 @@
 
   - name: SSH | Install fail2ban
-    package: name="{{ item }}" state=installed
+    package: name="{{ item }}" state=present
     retries: 3
     register: result
     until: not result.failed

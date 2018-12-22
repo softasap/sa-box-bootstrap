@@ -1,3 +1,5 @@
+- block:
+
   - name: Monit | Check if is installed
     command: dpkg-query -W monit
     when: ansible_os_family == "Debian"
@@ -81,28 +83,44 @@
     tags:
       - monit
 
-  - name: Monit | Ensure conf dir do exist
-    file: path="{{ item }}" state="directory" owner="root" group="root"
-    with_items:
-      - /etc/monit/conf-available
-      - /etc/monit/conf-enabled
+  when: ansible_os_family == "Debian"
+
+- block:
+
+  - name: Install monit from packages
+    package: name="monit" state="present"
+    retries: 3
+    register: result
+    until: not result.failed
     become: yes
     tags:
       - monit
 
-  - name: Monit | Ensure conf.d dir if any, is eliminated
-    file: path="/etc/monit/conf.d" state="absent"
-    with_items:
-      - /etc/monit/conf-available
-      - /etc/monit/conf-enabled
-    become: yes
-    tags:
-      - monit
+  when: ansible_os_family != "Debian"
 
-  - name: Monit | Restart
-    service: name=monit state=restarted
-    become: yes
-    when: docker_test is not defined
-    tags:
-      - monit
-      - update
+
+- name: Monit | Ensure conf dir do exist
+  file: path="{{ item }}" state="directory" owner="root" group="root"
+  with_items:
+    - /etc/monit/conf-available
+    - /etc/monit/conf-enabled
+  become: yes
+  tags:
+    - monit
+
+- name: Monit | Ensure conf.d dir if any, is eliminated
+  file: path="/etc/monit/conf.d" state="absent"
+  with_items:
+    - /etc/monit/conf-available
+    - /etc/monit/conf-enabled
+  become: yes
+  tags:
+    - monit
+
+- name: Monit | Restart
+  service: name=monit enabled="yes" state=restarted
+  become: yes
+  when: docker_test is not defined
+  tags:
+    - monit
+    - update
