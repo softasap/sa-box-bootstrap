@@ -6,14 +6,14 @@
       - firewalld
 
   - name: FirewallD | Configure incoming/outgoing defaults
-    template: src="{{role_dir}}/templates/firewalld/zone_public.xml.j2" dest="/etc/firewalld/zones/public.xml"
+    template: src="{{ role_dir }}/templates/firewalld/zone_public.xml.j2" dest="/etc/firewalld/zones/public.xml"
     become: yes
     tags:
       - firewalld
 
   - name: FirewallD | Configure rules to allow incoming traffic
     firewalld:
-      rich_rule: 'rule port port="{{item.port}}" protocol="{{item.proto}}" accept'
+      rich_rule: 'rule port port="{{ item.port }}" protocol="{{ item.proto }}" accept'
       permanent: true
       state: enabled
     with_items: "{{ufw_rules_allow | default([])}}"
@@ -24,10 +24,10 @@
 
   - name: FirewallD | Configure rules to allow incoming traffic from specific hosts
     firewalld:
-      rich_rule: 'rule port port="{{item.port}}" protocol="{{item.proto}}" source address="{{ item.address }}" accept'
+      rich_rule: 'rule port port="{{ item.port }}" protocol="{{ item.proto }}" source address="{{ item.address }}" accept'
       permanent: true
       state: enabled
-    with_items: "{{ufw_rules_allow_from_hosts | default([])}}"
+    with_items: "{{ ufw_rules_allow_from_hosts | default([]) }}"
     when: ufw_rules_allow_from_hosts is defined
     become: yes
     tags:
