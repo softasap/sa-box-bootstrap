@@ -15,7 +15,7 @@
   delay: 10
   become: yes
 # todo
-  ignore_errors: true 
+  ignore_errors: true
   when: epel_exists is failed
 
 - name: Import EPEL GPG key.
