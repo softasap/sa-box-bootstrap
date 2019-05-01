@@ -10,14 +10,15 @@
       - monit
 
   - name: Monit | package dependencies
-    apt: pkg="{{ item }}" state="present"
+    apt: 
+      pkg:
+        - libssl-dev
+        - build-essential
+      state: present
     become: yes
     retries: 3
     register: result
     until: not result.failed
-    with_items:
-      - libssl-dev
-      - build-essential
     tags:
       - monit
 

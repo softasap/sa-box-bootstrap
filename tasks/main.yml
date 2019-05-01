@@ -64,12 +64,8 @@
     become: yes
 
   - name: Bootstrap | set default timezone to {{ timezone }}
-    copy:
-      content: '{{ timezone | default("UTC") }}'
-      dest: /etc/timezone
-      owner: root
-      group: root
-      mode: 0644
+    timezone:
+      name: "{{ timezone | default('UTC') }}"
     become: yes
 
   - name: Bootstrap | reconfigure timezone data
