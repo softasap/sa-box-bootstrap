@@ -16,7 +16,7 @@
       rich_rule: 'rule port port="{{ item.port }}" protocol="{{ item.proto }}" accept'
       permanent: true
       state: enabled
-    with_items: "{{ufw_rules_allow | default([])}}"
+    with_items: "{{ ufw_rules_allow | default([]) }}"
     when: ufw_rules_allow is defined
     become: yes
     tags:
@@ -35,6 +35,8 @@
 
   - name: FirewallD | Reload
     shell: firewall-cmd --reload
+    changed_when: False
     become: yes
     tags:
       - firewalld
+      - skip_ansible_lint

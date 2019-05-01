@@ -10,7 +10,7 @@
       - monit
 
   - name: Monit | package dependencies
-    apt: 
+    apt:
       pkg:
         - libssl-dev
         - build-essential

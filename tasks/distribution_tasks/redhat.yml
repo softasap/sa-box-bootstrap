@@ -2,6 +2,7 @@
 - name: EPEL | Check if configured
   command: test -e /etc/yum.repos.d/epel.repo
   become: yes
+  changed_when: False
   register: epel_exists
   ignore_errors: true
 
@@ -13,7 +14,7 @@
   retries: 5
   delay: 10
   become: yes
-# todo  
+# todo
   ignore_errors: true 
   when: epel_exists is failed
 
