@@ -39,6 +39,15 @@
     tags:
       - ufw
 
+  - name: UFW | White list hosts
+    ufw:
+      rule: allow
+      src: '{{ item }}'
+    with_items: "{{ whitelistedips | default([]) }}"
+    become: yes
+    tags:
+      - ufw
+
   - name: UFW | Enable it
     ufw: state=enabled logging=on
     become: yes

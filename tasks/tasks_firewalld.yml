@@ -33,6 +33,18 @@
     tags:
       - firewalld
 
+  - name: FirewallD | White list hosts
+    firewalld:
+      rich_rule: 'rule family="ipv4" source address="{{ item }}" accept'
+      permanent: true
+      state: enabled
+      src: '{{ item }}'
+    with_items: "{{ whitelistedips | default([]) }}"
+    become: yes
+    tags:
+      - ufw
+
+
   - name: FirewallD | Reload
     shell: firewall-cmd --reload
     changed_when: False
