@@ -18,7 +18,7 @@
       - file2ban
 
   - name: SSH | local fail2ban jail config
-    template: src={{ root_dir }}/templates/security/jail.local.j2 dest=/etc/fail2ban/jail.local
+    template: src={{ role_dir }}/templates/security/jail.local.j2 dest=/etc/fail2ban/jail.local
     become: yes
     tags:
       - file2ban

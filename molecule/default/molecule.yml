@@ -13,7 +13,7 @@ platforms:
   #   # interfaces:
   #   #   - network_name: public_network
   #   #     type: dhcp
-  #   #     auto_config: true    
+  #   #     auto_config: true
   # - name: xenial
   #   box: ubuntu/xenial64
   - name: bionic
@@ -23,7 +23,7 @@ platforms:
     #     type: dhcp
     #     auto_config: true
   # - name: centos6
-  #   box: centos/6    
+  #   box: centos/6
   # - name: centos7
   #   box: centos/7
   # - name: fedora28
@@ -31,7 +31,7 @@ platforms:
   # - name: alpine
   #   box: generic/alpine28
 
-    
+
 provisioner:
   name: ansible
   # lint:
