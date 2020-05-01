@@ -1,4 +1,3 @@
-
   - name: SSH | Install fail2ban
     package: name="{{ item }}" state=present
     retries: 3

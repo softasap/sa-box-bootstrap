@@ -3,6 +3,8 @@ exclude_paths:
 parseable: true
 quiet: true
 skip_list:
-  - skip_ansible_lint
+  - skip_linting
+  - '602'
+  - '204'
 use_default_rules: true
 verbosity: 1

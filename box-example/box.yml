@@ -32,8 +32,6 @@
          option_enforce_ssh_keys_login: yes
        }
 
-
   tasks:
 
     - debug: msg="Tasks section"
-
