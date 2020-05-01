@@ -12,4 +12,3 @@
     - name:  POC mc install
       apt: pkg="mc"
       become: yes
-
