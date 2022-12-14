@@ -6,20 +6,20 @@
 
   - name: UFW | dependencies
     package: name="ufw" state="present"
-    become: yes
+    become: true
     tags:
       - ufw
 
   - name: UFW | Reset it
     ufw: state=reset
-    become: yes
+    become: true
     tags:
       - ufw
 
   - name: UFW | Configure incoming/outgoing defaults
     ufw: policy="{{ item.policy }}" direction="{{ item.direction }}"
     with_items: "{{ ufw_rules_default | default([]) }}"
-    become: yes
+    become: true
     tags:
       - ufw
 
@@ -27,7 +27,7 @@
     ufw: rule=allow port="{{ item.port }}" proto="{{ item.proto }}"
     with_items: "{{ ufw_rules_allow | default([]) }}"
     when: ufw_rules_allow is defined
-    become: yes
+    become: true
     tags:
       - ufw
 
@@ -35,7 +35,7 @@
     ufw: rule=allow port="{{ item.port }}" proto="{{ item.proto }}" src="{{ item.address }}"
     with_items: "{{ ufw_rules_allow_from_hosts | default([]) }}"
     when: ufw_rules_allow_from_hosts is defined
-    become: yes
+    become: true
     tags:
       - ufw
 
@@ -44,12 +44,12 @@
       rule: allow
       src: '{{ item }}'
     with_items: "{{ whitelistedips | default([]) }}"
-    become: yes
+    become: true
     tags:
       - ufw
 
   - name: UFW | Enable it
     ufw: state=enabled logging=on
-    become: yes
+    become: true
     tags:
       - ufw

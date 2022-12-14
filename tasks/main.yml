@@ -34,12 +34,12 @@
     - name: Bootstrap | check apt last update
       stat: path=/var/cache/apt
       register: apt_cache_stat
-      become: yes
+      become: true
 
     - name: Bootstrap | update apt if needed
       apt: update_cache=yes
       when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
-      become: yes
+      become: true
       tags:
         - skip_ansible_lint
 
@@ -47,12 +47,12 @@
 
   - name: Bootstrap | Sets correctly hostname
     lineinfile: dest=/etc/hosts line="127.0.0.1 {{ hostname }}"
-    become: yes
+    become: true
 
   - name: Bootstrap | Sets correctly hostname
     shell: hostname {{ hostname }}
     ignore_errors: true
-    become: yes
+    become: true
     tags:
       - skip_ansible_lint
 
@@ -61,17 +61,17 @@
       dest:     /etc/hostname
       regexp:   "^[A-Za-z]*.*"
       line:     "{{ hostname }}"
-    become: yes
+    become: true
 
   - name: Bootstrap | set default timezone to {{ timezone }}
     timezone:
       name: "{{ timezone | default('UTC') }}"
-    become: yes
+    become: true
 
   - name: Bootstrap | reconfigure timezone data
     command: dpkg-reconfigure -f noninteractive tzdata
     when: ansible_os_family == "Debian"
-    become: yes
+    become: true
 
   - name: Bootstrap | address cloud-init - change 127.0.1.1 to real eth0 IP address
     lineinfile:
@@ -79,7 +79,7 @@
       regexp:   '^127\.0\.1\.1(.*)$'
       line:     'ansible_eth0.ipv4.address\1'
       backrefs: yes
-    become: yes
+    become: true
 
   - include: "tasks_{{ firewall_type }}.yml"
     when: option_firewall
@@ -109,7 +109,7 @@
     authorized_key: user={{ deploy_user }} key="{{ lookup('file', item) }}"
     when: deploy_user_authorized_keys is defined
     with_items: "{{ deploy_user_authorized_keys | default([]) }}"
-    become: yes
+    become: true
 
   - name: Sanity check to prevent box lockdown
     fail:
@@ -128,7 +128,7 @@
       insertafter: "{{ item.insertafter | default('EOF') }}"
     with_items: "{{ sshd_config_lines | default([]) }}"
     when: option_enforce_ssh_keys_login
-    become: yes
+    become: true
     tags: ssh
 
   - name: SSH | Turn file2ban on
@@ -138,5 +138,5 @@
   - name: SSH | Restart SSHD
     service: name=sshd state=restarted
     when: option_enforce_ssh_keys_login and docker_test is not defined
-    become: yes
+    become: true
     tags: ssh

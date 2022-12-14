@@ -12,7 +12,7 @@
 
   roles:
      - {
-        role: "sa-box-bootstrap",
+        role: "sa_box_bootstrap",
         deploy_user: "{{box_deploy_user}}",
         deploy_user_authorized_keys: "{{box_deploy_authorized_keys}}",
         deploy_user_sudo_password: "{{box_deploy_pass | password_hash('sha512')}}",

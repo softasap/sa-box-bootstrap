@@ -15,7 +15,7 @@
         - libssl-dev
         - build-essential
       state: present
-    become: yes
+    become: true
     retries: 3
     register: result
     until: not result.failed
@@ -27,32 +27,32 @@
          get_url:
            url: https://www.openssl.org/source/openssl-1.0.2p.tar.gz
            dest: /usr/src/openssl-1.0.2p.tar.gz
-         become: yes
+         become: true
 
        - name: Extract openssl-1.0.2-latest.tar.gz
          unarchive:
             src: /usr/src/openssl-1.0.2p.tar.gz
             dest: /usr/src/
             remote_src: yes
-         become: yes
+         become: true
 
        - name: ./config
          command: ./config
          args:
            chdir: /usr/src/openssl-1.0.2p
-         become: yes
+         become: true
 
        - name: make
          command: make
          args:
            chdir: /usr/src/openssl-1.0.2p
-         become: yes
+         become: true
 
        - name: make install
          command: make install
          args:
            chdir: /usr/src/openssl-1.0.2p
-         become: yes
+         become: true
 
     when: monit_check_deb.rc == 1 and monit_version != "default"
 
@@ -70,7 +70,7 @@
   - name: Monit | Install (from deb)
     apt: deb="/tmp/monit_{{ monit_version }}_amd64.deb"
     when: monit_check_deb.rc == 1 and monit_version != "default"
-    become: yes
+    become: true
     tags:
       - monit
 
@@ -80,7 +80,7 @@
     retries: 3
     register: result
     until: not result.failed
-    become: yes
+    become: true
     tags:
       - monit
 
@@ -93,7 +93,7 @@
     retries: 3
     register: result
     until: not result.failed
-    become: yes
+    become: true
     tags:
       - monit
 
@@ -105,7 +105,7 @@
   with_items:
     - /etc/monit/conf-available
     - /etc/monit/conf-enabled
-  become: yes
+  become: true
   tags:
     - monit
 
@@ -114,13 +114,13 @@
   with_items:
     - /etc/monit/conf-available
     - /etc/monit/conf-enabled
-  become: yes
+  become: true
   tags:
     - monit
 
 - name: Monit | Restart
   service: name=monit enabled="yes" state=restarted
-  become: yes
+  become: true
   when: docker_test is not defined
   tags:
     - monit

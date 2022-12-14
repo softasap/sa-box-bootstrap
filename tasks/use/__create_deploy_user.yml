@@ -12,14 +12,14 @@
     retries: 3
     register: result
     until: not result.failed
-    become: yes
+    become: true
     tags:
      - deployer
 
 
   - name: Deploy User | Creating group
     group: name={{ thegroup }} state=present
-    become: yes
+    become: true
     tags:
      - deployer
 
@@ -33,13 +33,13 @@
       group: "{{ thegroup }}"
       groups: "{{ deploy_user_group }}"
       password: "{{ thepassword | default(omit) }}"
-    become: yes
+    become: true
     tags:
       - deployer
 
   - name: Deploy User | Check regular user key presence
     stat: path=/home/{{ ansible_user_id }}/.ssh/authorized_keys
-    become: yes
+    become: true
     when: option_copy_initial_authorized_keys
     register: check_authorized_keys
     tags:
@@ -47,20 +47,20 @@
 
   - name: Deploy User | Copy authorized_keys from {{ ansible_user_id }}
     command: cp /home/{{ ansible_user_id }}/.ssh/authorized_keys {{ home }}/.ssh/authorized_keys
-    become: yes
+    become: true
     when: option_copy_initial_authorized_keys and check_authorized_keys.stat.exists
     tags:
      - deployer
 
   - name: Deploy User | Copy authorized_keys from root
     command: cp /root/.ssh/authorized_keys {{ home }}/.ssh/authorized_keys
-    become: yes
+    become: true
     when: option_copy_initial_authorized_keys and ansible_user_id == "root"
     tags:
      - deployer
   - name: Deploy User | Set permission on authorized_keys
     file: path={{ home }}/.ssh/authorized_keys mode=0600 owner={{ theuser }} group={{ thegroup }}
-    become: yes
+    become: true
     when: option_copy_initial_authorized_keys and check_authorized_keys.stat.exists
     tags:
      - deployer
@@ -73,7 +73,7 @@
       line: "%{{ theuser }} ALL=(ALL) NOPASSWD:ALL"
       validate: "visudo -cf %s"
     when: thepassword is not defined or thepassword.startswith("__omit_place_holder__")
-    become: yes
+    become: true
     tags:
      - deployer
 
@@ -85,6 +85,6 @@
       line: "%{{ theuser }} ALL=(ALL) ALL"
       validate: "visudo -cf %s"
     when: thepassword is defined and not thepassword.startswith("__omit_place_holder__")
-    become: yes
+    become: true
     tags:
      - deployer

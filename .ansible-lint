@@ -1,5 +1,6 @@
 exclude_paths:
   - ./box-example
+  - ./molecule
 parseable: true
 quiet: true
 skip_list:

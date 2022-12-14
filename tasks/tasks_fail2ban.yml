@@ -3,7 +3,7 @@
     retries: 3
     register: result
     until: not result.failed
-    become: yes
+    become: true
     with_items:
       - "{{ fail2ban_packages }}"
     tags:
@@ -12,18 +12,18 @@
   - name: File2Ban | Template ufw action to ban with ufw
     template: src="{{ role_dir }}/templates/security/ufw.conf.j2" dest=/etc/fail2ban/action.d/ufw.conf
     when: fail2ban_action == 'ufw' and ansible_os_family == "Debian"
-    become: yes
+    become: true
     tags:
       - file2ban
 
   - name: SSH | local fail2ban jail config
     template: src={{ role_dir }}/templates/security/jail.local.j2 dest=/etc/fail2ban/jail.local
-    become: yes
+    become: true
     tags:
       - file2ban
 
   - name: SSH |  reload fail2ban
     service: name=fail2ban state=restarted enabled=yes
-    become: yes
+    become: true
     tags:
       - file2ban
