@@ -116,7 +116,7 @@
       thepassword: "{{ deploy_user_actual_pass | default(omit) }}"
     when: option_create_deploy_user and deploy_user is defined
 
-  - name: SSH | Provision keys include
+  - name: SSH | Provision keys include ( true = option_inject_keys = {{ option_inject_keys }} )
     ansible.builtin.include_tasks: "use/__provision_keys.yml"
     when: option_inject_keys
 
