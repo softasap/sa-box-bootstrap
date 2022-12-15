@@ -1,14 +1,22 @@
 --- # original credits https://github.com/StarterSquad/prudentia/blob/master/prudentia/tasks/add-sudo-user.yml
 
-  - debug: msg="Creating deploy user {{ theuser }}:{{ thegroup }} with home directory {{ home }}"
+  - name: Hint
+    ansible.builtin.debug:
+      msg: "Creating deploy user {{ theuser }}:{{ thegroup }} with home directory {{ home }}"
     tags:
      - deployer
 
-  - debug: msg="IMPORTANT! IF YOU PROVIDE PASS FOR DEPLOYMENT USER - PROVIDE IT HASHED,"
-  - debug: msg="POSSIBLE FILTER -  | password_hash('sha512') "
+  - name: Hint
+    ansible.builtin.debug:
+      msg: "IMPORTANT! IF YOU PROVIDE PASS FOR DEPLOYMENT USER - PROVIDE IT HASHED,"
+  - name: Hint
+    ansible.builtin.debug:
+      msg: "POSSIBLE FILTER -  | password_hash('sha512') "
 
   - name: Deploy User | Dependencies
-    package: name="sudo" state="present"
+    ansible.builtin.package:
+      name: "sudo"
+      state: "present"
     retries: 3
     register: result
     until: not result.failed
@@ -18,13 +26,15 @@
 
 
   - name: Deploy User | Creating group
-    group: name={{ thegroup }} state=present
+    ansible.builtin.group:
+      name: "{{ thegroup }}"
+      state: present
     become: true
     tags:
      - deployer
 
   - name: Deploy User | Creating user
-    user:
+    ansible.builtin.user:
       name: "{{ theuser }}"
       home: "{{ home }}"
       state: "present"
@@ -38,7 +48,8 @@
       - deployer
 
   - name: Deploy User | Check regular user key presence
-    stat: path=/home/{{ ansible_user_id }}/.ssh/authorized_keys
+    ansible.builtin.stat:
+      path: "/home/{{ ansible_user_id }}/.ssh/authorized_keys"
     become: true
     when: option_copy_initial_authorized_keys
     register: check_authorized_keys
@@ -46,27 +57,32 @@
      - deployer
 
   - name: Deploy User | Copy authorized_keys from {{ ansible_user_id }}
-    command: cp /home/{{ ansible_user_id }}/.ssh/authorized_keys {{ home }}/.ssh/authorized_keys
+    ansible.builtin.command: cp /home/{{ ansible_user_id }}/.ssh/authorized_keys {{ home }}/.ssh/authorized_keys
     become: true
     when: option_copy_initial_authorized_keys and check_authorized_keys.stat.exists
     tags:
      - deployer
 
   - name: Deploy User | Copy authorized_keys from root
-    command: cp /root/.ssh/authorized_keys {{ home }}/.ssh/authorized_keys
+    ansible.builtin.command: cp /root/.ssh/authorized_keys {{ home }}/.ssh/authorized_keys
     become: true
     when: option_copy_initial_authorized_keys and ansible_user_id == "root"
     tags:
      - deployer
+
   - name: Deploy User | Set permission on authorized_keys
-    file: path={{ home }}/.ssh/authorized_keys mode=0600 owner={{ theuser }} group={{ thegroup }}
+    ansible.builtin.file:
+      path: "{{ home }}/.ssh/authorized_keys"
+      mode: 0600
+      owner: "{{ theuser }}"
+      group: "{{ thegroup }}"
     become: true
     when: option_copy_initial_authorized_keys and check_authorized_keys.stat.exists
     tags:
      - deployer
 
   - name: Deploy User | Ensuring sudoers no pwd prompting, if no sudo password set
-    lineinfile:
+    ansible.builtin.lineinfile:
       dest: /etc/sudoers
       state: present
       regexp: "%{{ theuser }}"
@@ -78,7 +94,7 @@
      - deployer
 
   - name: Deploy User | Ensuring sudoers with pwd prompting, if sudo password set
-    lineinfile:
+    ansible.builtin.lineinfile:
       dest: /etc/sudoers
       state: present
       regexp: "%{{ theuser }}"

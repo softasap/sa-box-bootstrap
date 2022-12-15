@@ -22,3 +22,5 @@ roles/**/.ansible-lint
 *.tar.gz
 *.tgz
 .venv
+meta/.galaxy_install_info
+result.sarif

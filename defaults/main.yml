@@ -36,7 +36,7 @@
     - {
         port: 80,
         proto: tcp
-       }
+      }
     - {
         port: 443,
         proto: tcp
@@ -44,7 +44,7 @@
     - {
         port: 22,
         proto: tcp
-       }
+      }
 
   ufw_rules_allow_from_hosts: []
     # - {

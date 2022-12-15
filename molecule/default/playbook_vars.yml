@@ -1,1 +1,4 @@
 ---
+  box_deploy_user: ubuntu
+  deploy_user_authorized_key_lines:
+    - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDkDkJR4F63sqioKgoBtMSCx5gbfTwlz1qmLrzszPOvM testkey"

@@ -10,14 +10,14 @@
     - user_sudo_pass: "secret"
 
   pre_tasks:
-    - debug: msg="Pre tasks section"
+    - ansible.builtin.debug: msg="Pre tasks section"
 
     - name: ANSIBLE PYTHON | install python 2
       raw: test -e /usr/bin/python || (apt -qqy update && apt install -qy python-minimal)
       become: true
 
     - name:  UNPRIVILEGED USERS | Get acl dependency (ansible unprivileged user operations magic)
-      apt: pkg="acl"
+      ansible.builtin.apt: pkg="acl"
       become: true
 
     - name: gather facts
@@ -34,4 +34,4 @@
 
   tasks:
 
-    - debug: msg="Tasks section"
+    - ansible.builtin.debug: msg="Tasks section"

@@ -1,7 +1,8 @@
-- block:
+- name: Monit | Debian install
+  block:
 
   - name: Monit | Check if is installed
-    command: dpkg-query -W monit
+    ansible.builtin.command: dpkg-query -W monit
     when: ansible_os_family == "Debian"
     register: monit_check_deb
     failed_when: monit_check_deb.rc > 1
@@ -10,7 +11,7 @@
       - monit
 
   - name: Monit | package dependencies
-    apt:
+    ansible.builtin.apt:
       pkg:
         - libssl-dev
         - build-essential
@@ -22,45 +23,46 @@
     tags:
       - monit
 
-  - block:
-       - name: Download openssl-1.0.2-latest.tar.gz
-         get_url:
-           url: https://www.openssl.org/source/openssl-1.0.2p.tar.gz
-           dest: /usr/src/openssl-1.0.2p.tar.gz
-         become: true
-
-       - name: Extract openssl-1.0.2-latest.tar.gz
-         unarchive:
-            src: /usr/src/openssl-1.0.2p.tar.gz
-            dest: /usr/src/
-            remote_src: yes
-         become: true
-
-       - name: ./config
-         command: ./config
-         args:
-           chdir: /usr/src/openssl-1.0.2p
-         become: true
-
-       - name: make
-         command: make
-         args:
-           chdir: /usr/src/openssl-1.0.2p
-         become: true
-
-       - name: make install
-         command: make install
-         args:
-           chdir: /usr/src/openssl-1.0.2p
-         become: true
-
+  - name: Monit | Install from source if deb missing
     when: monit_check_deb.rc == 1 and monit_version != "default"
+    block:
+      - name: Download openssl-1.0.2-latest.tar.gz
+        ansible.builtin.get_url:
+          url: https://www.openssl.org/source/openssl-1.0.2p.tar.gz
+          dest: /usr/src/openssl-1.0.2p.tar.gz
+          mode: "u=rw,g=r,o=r"
+        become: true
 
+      - name: Extract openssl-1.0.2-latest.tar.gz
+        ansible.builtin.unarchive:
+          src: /usr/src/openssl-1.0.2p.tar.gz
+          dest: /usr/src/
+          remote_src: yes
+        become: true
+
+      - name: Monit | ./config
+        ansible.builtin.command: ./config
+        args:
+          chdir: /usr/src/openssl-1.0.2p
+        become: true
+
+      - name: Monit | Make
+        ansible.builtin.command: make
+        args:
+          chdir: /usr/src/openssl-1.0.2p
+        become: true
+
+      - name: Monit | make install
+        ansible.builtin.command: make install
+        args:
+          chdir: /usr/src/openssl-1.0.2p
+        become: true
 
   - name: Monit | Download
-    get_url:
+    ansible.builtin.get_url:
       url: "http://us.archive.ubuntu.com/ubuntu/pool/universe/m/monit/monit_{{ monit_version }}_amd64.deb"
       dest: "/tmp/monit_{{ monit_version }}_amd64.deb"
+      mode: "u=rw,g=r,o=r"
 #                 https://mmonit.com/monit/dist/binary/5.19.0/monit-5.19.0-linux-x64.tar.gz
 #                 http://us.archive.ubuntu.com/ubuntu/pool/universe/m/monit/monit_5.19.0-1_amd64.deb
     when: monit_check_deb.rc == 1 and monit_version != "default"
@@ -68,14 +70,18 @@
       - monit
 
   - name: Monit | Install (from deb)
-    apt: deb="/tmp/monit_{{ monit_version }}_amd64.deb"
+    ansible.builtin.apt:
+      deb: "/tmp/monit_{{ monit_version }}_amd64.deb"
     when: monit_check_deb.rc == 1 and monit_version != "default"
     become: true
     tags:
       - monit
 
   - name: Monit | Install (from distribution)
-    apt: pkg="monit" state="present"
+    ansible.builtin.apt:
+      pkg: monit
+      state: present
+      update_cache: true
     when: monit_check_deb.rc == 1 and monit_version == "default"
     retries: 3
     register: result
@@ -86,10 +92,13 @@
 
   when: ansible_os_family == "Debian"
 
-- block:
+- name: Monit | Install from packages
+  block:
 
   - name: Install monit from packages
-    package: name="monit" state="present"
+    ansible.builtin.package:
+      name: "monit"
+      state: "present"
     retries: 3
     register: result
     until: not result.failed
@@ -101,7 +110,12 @@
 
 
 - name: Monit | Ensure conf dir do exist
-  file: path="{{ item }}" state="directory" owner="root" group="root"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
   with_items:
     - /etc/monit/conf-available
     - /etc/monit/conf-enabled
@@ -110,7 +124,9 @@
     - monit
 
 - name: Monit | Ensure conf.d dir if any, is eliminated
-  file: path="/etc/monit/conf.d" state="absent"
+  ansible.builtin.file:
+    path: "/etc/monit/conf.d"
+    state: "absent"
   with_items:
     - /etc/monit/conf-available
     - /etc/monit/conf-enabled
@@ -119,7 +135,10 @@
     - monit
 
 - name: Monit | Restart
-  service: name=monit enabled="yes" state=restarted
+  ansible.builtin.service:
+    name: monit
+    enabled: "yes"
+    state: restarted
   become: true
   when: docker_test is not defined
   tags:
