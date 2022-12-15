@@ -212,7 +212,7 @@ roles:
   lineinfile: dest=/etc/ssh/sshd_config regexp="{{item.regexp}}" line="{{item.line}}"
   with_items: "{{sshd_config_lines}}"
   when: option_enforce_ssh_keys_login
-  become: yes
+  become: true
   tags: ssh
 ```
 
