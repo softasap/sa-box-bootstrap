@@ -1,46 +1,51 @@
 ---
   - name: FirewallD | Enable it
-    service: name="firewalld" state=restarted enabled="yes"
-    become: yes
+    ansible.builtin.service:
+      name: "firewalld"
+      state: restarted
+      enabled: "yes"
+    become: true
     tags:
       - firewalld
 
   - name: FirewallD | Configure incoming/outgoing defaults
-    template: src="{{ role_dir }}/templates/firewalld/zone_public.xml.j2" dest="/etc/firewalld/zones/public.xml"
-    become: yes
+    ansible.builtin.template:
+      src: "{{ role_dir }}/templates/firewalld/zone_public.xml.j2"
+      dest: "/etc/firewalld/zones/public.xml"
+      mode: "u=rw,g=r,o=r"
+    become: true
     tags:
       - firewalld
 
   - name: FirewallD | Configure rules to allow incoming traffic
-    firewalld:
+    ansible.posix.firewalld:
       rich_rule: 'rule port port="{{ item.port }}" protocol="{{ item.proto }}" accept'
       permanent: true
       state: enabled
     with_items: "{{ ufw_rules_allow | default([]) }}"
     when: ufw_rules_allow is defined
-    become: yes
+    become: true
     tags:
       - firewalld
 
   - name: FirewallD | Configure rules to allow incoming traffic from specific hosts
-    firewalld:
+    ansible.posix.firewalld:
       rich_rule: 'rule port port="{{ item.port }}" protocol="{{ item.proto }}" source address="{{ item.address }}" accept'
       permanent: true
       state: enabled
     with_items: "{{ ufw_rules_allow_from_hosts | default([]) }}"
     when: ufw_rules_allow_from_hosts is defined
-    become: yes
+    become: true
     tags:
       - firewalld
 
   - name: FirewallD | White list hosts
-    firewalld:
+    ansible.posix.firewalld:
       rich_rule: 'rule family="ipv4" source address="{{ item }}" accept'
       permanent: true
       state: enabled
-      src: '{{ item }}'
     with_items: "{{ whitelistedips | default([]) }}"
-    become: yes
+    become: true
     tags:
       - ufw
 
@@ -48,7 +53,7 @@
   - name: FirewallD | Reload
     shell: firewall-cmd --reload
     changed_when: False
-    become: yes
+    become: true
     tags:
       - firewalld
       - skip_ansible_lint

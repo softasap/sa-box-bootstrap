@@ -1,6 +1,8 @@
 ---
 galaxy_info:
   author: vyacheslav voronenko
+  namespace: softasap
+  role_name: sa_box_bootstap
   description: Role to perform basic securing of fresh instance for further automated deploy
   company: http://www.voronenko.info/
   # If the issue tracker for your role is not on github, uncomment the
@@ -28,15 +30,15 @@ galaxy_info:
         - focal
     - name: EL
       versions:
-        - 6
-        - 7
+        - "6"
+        - "7"
     - name: Fedora
       versions:
-       - 25
-       - 26
-       - 27
-       - 28
-       - 29
+       - "25"
+       - "26"
+       - "27"
+       - "28"
+       - "29"
   galaxy_tags:
     - bootstrap
     - provisioning

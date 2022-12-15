@@ -7,7 +7,7 @@ sudo: false
 
 # Install ansible
 addons:
-  apt:
+  ansible.builtin.apt:
     packages:
     - python-pip
 
